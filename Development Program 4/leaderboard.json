@@ -1,0 +1,62 @@
+[
+    {
+        "Username": "sc",
+        "Score": 0,
+        "Total_Time": 3.26,
+        "Avg_Answer_Time": 3.26
+    },
+    {
+        "Username": "sc",
+        "Score": 2,
+        "Total_Time": 8.96,
+        "Avg_Answer_Time": 2.99
+    },
+    {
+        "Username": "ascsa",
+        "Score": 14,
+        "Total_Time": 55.21,
+        "Avg_Answer_Time": 3.68
+    },
+    {
+        "Username": "ascsa",
+        "Score": 2,
+        "Total_Time": 10.38,
+        "Avg_Answer_Time": 3.46
+    },
+    {
+        "Username": "dfs",
+        "Score": 3,
+        "Total_Time": 16.53,
+        "Avg_Answer_Time": 4.13
+    },
+    {
+        "Username": "sac",
+        "Score": 9,
+        "Total_Time": 31.69,
+        "Avg_Answer_Time": 3.17
+    },
+    {
+        "Username": "sac",
+        "Score": 0,
+        "Total_Time": 2.92,
+        "Avg_Answer_Time": 2.92
+    },
+    {
+        "Username": "io",
+        "Score": 3,
+        "Total_Time": 11.21,
+        "Avg_Answer_Time": 2.8
+    },
+    {
+        "Username": "fbdf",
+        "Score": 2,
+        "Total_Time": 12.86,
+        "Avg_Answer_Time": 4.29
+    },
+    {
+        "Username": "jhm",
+        "Score": 2,
+        "Total_Time": 15.55,
+        "Avg_Answer_Time": 5.18
+    }
+]
