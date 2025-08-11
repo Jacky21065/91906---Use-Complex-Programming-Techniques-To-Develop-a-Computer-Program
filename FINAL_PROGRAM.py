@@ -2,126 +2,152 @@
 Program Name: Python Maths Car Game
 Version Name: FINAL_PROGRAM
 Author: Jacky
-Date: Monday, 21 July 2025
+Date: Friday, 25th July 2025
 Purpose/Description: Final Program.
 Language Used: Python 3.10
-Files Required: Images, Music
+Files Required: Images, Music, Readme and Credits all inside the program folder
 """
 
-# Purpose: Import necessary libraries
-# Imports the PYGAME library for developing the code
+# Purpose: Import necessary libraries.
+# Imports the PYGAME library for developing the code.
 import pygame
-# Imports the TIME library for pausing and restarting
+# Imports the TIME library for pausing and restarting.
 import time
-# Imports the RANDOM library for generating random numbers for maths questions and random positioning of obstacle cars
+# Imports the RANDOM library for generating random numbers for maths questions and random positioning of obstacle cars.
 import random
-# Imports the SYMPY library for can generate questions for derivatives, integrals, algebra and number theory
+# Imports the SYMPY library for generating questions for derivatives, integrals, algebra and number theory.
 import sympy as sp
-# Imports the save file in Json format
+# Imports the save file in Json format.
 import json
-# Imports the OS module to allow the system to write to a save file
+# Imports the OS module to allow the system to write to a save file.
 import os
-# Imports FRACTIONS to be generated in the maths questions
+# Imports FRACTIONS to be generated in the maths questions.
 from fractions import Fraction
-# Imports the TKINTER GUI library for start screen and leaderboard
+# Imports the TKINTER GUI library for start screen and leaderboard.
 import tkinter as tk
-# For popup alert windows in Tkinter
+# For popup alert windows in Tkinter.
 from tkinter import messagebox
 
-
-# Global variables for tracking game time
+# Global variables for tracking game time.
 total_game_time = 0.0
 start_time_global = 0.0
 avg_answer_time = 0.0
-# Time taken per question
+# Time taken per question.
 answer_times = []
-# When current question appeared
+# After the current question appears.
 question_start_time = 0
-# Global variables for difficulty selection
+# Global variables for difficulty selection.
 selected_difficulty = None
+# Check for any instances of closing the game.
+gameExit = False
 
-# Mistakes feature
-MISTAKES_FILE = "mistakes.json"  # --- MISTAKES FEATURE ---
+# Purpose: Mistakes Log, which saves to the mistakes.json file.
+MISTAKES_FILE = "mistakes.json" 
 
-# Purpose: Define dimensions for the game window
-# Width of the game window
+# Purpose: Define dimensions for the game window.
+# Width of the game window.
 DISPLAY_WIDTH = 800
-# Height of the game window
+# Height of the game window.
 DISPLAY_HEIGHT = 600  
 
-# Purpose: Define color shades using RGB values
-# RGB value for BLACK
+# Purpose: Define color shades using RGB values.
+# RGB value for BLACK.
 BLACK = (0, 0, 0)
-# RGB value for WHITE
+# RGB value for WHITE.
 WHITE = (255, 255, 255)
-# RGB for BLUE
+# RGB for BLUE.
 BLUE = (0, 0, 255)
 
-# Purpose: Set dimensions for the cars
-# Height of the car
+# Purpose: Set dimensions for the cars.
+# Height of the car.
 CAR_HEIGHT = 100
-# Width of the car
+# Width of the car.
 CAR_WIDTH = 50
 
-# Only calculate average if at least one answer recorded
+# Only calculate average if at least one answer recorded.
 if answer_times:
     avg_answer_time = sum(answer_times) / len(answer_times)
 else:
     avg_answer_time = 0.0
 
-# Function to count the score and display it to the player
+""" Function to run when the user closes the window,
+    either through the exit button or the X button."""
+def on_closing():
+    # Cleanup code on window close.
+    try:
+        pygame.quit()
+    except:
+        pass
+    # Destroy root if it exists and quit program.
+    try:
+        root.destroy()
+    except:
+        pass
+    # Exit the program.
+    exit()
+    
+""" Function to count the score and display it to the player"""
 def score(count):
-    # Display the current score
-    # Set the font size and font style for displaying the current score
-    font = pygame.font.SysFont(None, 70)
-    # Render and create score text
+    # Display the current score.
+    # Set the font size and font style for displaying the current score.
+    font = pygame.font.SysFont(None, 65)
+    # Render and create score text.
     text = font.render("Score : " + str(count), True, BLACK)
-    # Display the score to the player 
-    gameDisplay.blit(text, (0, 0))  
+    # Create a highlight rectangle.
+    highlight_rect = text.get_rect(topleft=(0, 0))
+    # Pixels of padding around the text.
+    padding = 10
+    highlight_rect.inflate_ip(padding * 2, padding * 2)  
 
-# Function to draw cars at specified X positions and Y positions
+    # Draw highlight rectangle behind text.
+    pygame.draw.rect(gameDisplay, (255, 165, 0), highlight_rect)
+
+    # Draw the text.
+    gameDisplay.blit(text, (padding, padding)) 
+
+""" Function to draw cars at specified X positions and Y positions."""
 def draw_car(carx, cary, car):
-    # Display obstacle car
-    # Draw car image at given X position and Y position
+    # Display obstacle car.
+    # Draw car image at given X position and Y position.
     gameDisplay.blit(car, (carx, cary))  
 
-# Function to draw car
+""" Function to draw the cars. """
 def car(x, y):
-    # Display player's car
-    # Draw car at specified X position and Y position
+    # Display player's car.
+    # Draw car at specified X position and Y position.
     gameDisplay.blit(carImg, (x, y))  
 
-# Function to create text to go with the rectangle
+""" Function to create text to go with the rectangle."""
 def text_objects(text, font):
-    # Create text surface and return surface with its rectangle
-    # Render and create the text
+    # Create text surface and return surface with its rectangle.
+    # Render and create the text.
     textSurface = font.render(text, True, BLACK)
-    # Return rendered surface and rectangle
+    # Return rendered surface and rectangle.
     return textSurface, textSurface.get_rect()  
 
-# Function to display the previously created text
-# To be used for displaying the current score
+""" Function to display the previously created text
+    to be used for displaying the current score."""
 def message_display(text, size, x, y):
-    # Display a message on the screen
-    # Set the font size and font style for displaying the current score
+    # Display a message on the screen.
+    # Set the font size and font style for displaying the current score.
     font = pygame.font.Font("freesansbold.ttf", size)
-    # Get text and rectangle
+    # Get text and rectangle.
     text_surface, text_rectangle = text_objects(text, font)
-    # Set message at specified X position and Y position
+    # Set message at specified X position and Y position.
     text_rectangle.center = (x, y)  
-    # Display text on top rectangle on top of screen
+    # Display text on top rectangle on top of screen.
     gameDisplay.blit(text_surface, text_rectangle)
-    # Show current difficulty on screen
+    # Show current difficulty on screen.
     diff_surface = font.render(f"Difficulty: {selected_difficulty}", True, (0, 0, 0))
     screen.blit(diff_surface, (10, 40))  
 
-# Function to determine what happens in the event the user crashes
-# into the correct car
+""" Function to determine what happens in the event the user crashes
+    into the correct car."""
 def crash(x, y, count):
     global total_game_time, start_time_global, avg_answer_time
     total_game_time = time.time() - start_time_global
 
-    # Save to leaderboard BEFORE quitting and showing end screen
+    # Save to leaderboard BEFORE quitting and showing end screen.
     import csv
     if answer_times:
         avg_answer_time = sum(answer_times) / len(answer_times)
@@ -130,7 +156,7 @@ def crash(x, y, count):
 
     save_leaderboard_entry(USERNAME, count, total_game_time, avg_answer_time)
 
-    # Display crash image and message
+    # Display crash image and message.
     gameDisplay.blit(crash_img, (x, y))
     message_display("You Crashed", 115, DISPLAY_WIDTH / 2, DISPLAY_HEIGHT / 2)
     pygame.display.update()
@@ -178,7 +204,7 @@ def generate_calculus_question(mode=None):
         result = sp.integrate(poly, x)
         question = f"∫ {coeff}x^{power} dx"
 
-    # Format result as clean string
+    # Format result as clean string.
     result_str = str(result).replace('**', '^').replace('*', '')
     
     return question, result_str
@@ -237,6 +263,7 @@ def generate_question():
     elif selected_difficulty == "Advanced":
         return generate_calculus_question(random.choice(["diff", "int"]))
 
+    # In case one question fails to generate, then use this question.
     return "2+2", 4
 
 
@@ -256,10 +283,10 @@ def make_wrong_answer(correct):
         return str(correct) + random.choice(["1", "2", "3"])
 
 
-# Function to display the previously created text
-# To be used for displaying the answers on the obstacle cars, in white
+""" Function to display the previously created text
+    To be used for displaying the answers on the obstacle cars, in white."""
 def message_display(text, size, x, y, color=(255,255,255)):
-    font = pygame.font.SysFont("DejaVu Sans", 25, bold=True)
+    font = pygame.font.SysFont("DejaVu Sans", 20, bold=True)
     text_surface = font.render(str(text), True, color)
     text_rect = text_surface.get_rect()
     text_rect.center = (x, y)
@@ -267,48 +294,48 @@ def message_display(text, size, x, y, color=(255,255,255)):
     
 def setup_pygame():
     global gameDisplay, clock, carImg, car2Img, bgImg, crash_img, START_MUSIC, screen
-    # Purpose: Initialise Pygame
-    # Start Pygame modules
+    # Purpose: Initialise Pygame.
+    # Start Pygame modules.
     pygame.init()  
     
-    # Purpose: Set up visuals of the game
-    # Set display dimensions of the game window using
-    # previously defined dimensions above
+    # Purpose: Set up visuals of the game.
+    # Set display dimensions of the game window using.
+    # previously defined dimensions above.
     gameDisplay = pygame.display.set_mode((DISPLAY_WIDTH, DISPLAY_HEIGHT))
-    screen = gameDisplay  # for message_display usage
-    # Set the window title on the game window
+    screen = gameDisplay  
+    # Set the window title on the game window.
     pygame.display.set_caption("Maths Car Game")
-    # Create the clock object to manage frame rate
-    clock = pygame.time.Clock() 
+    # Create the clock object to manage frame rate.
+    clock = pygame.time.Clock()
     
-    # Purpose: Load images for the game
-    # Load image of the player's car
+    # Purpose: Load images for the game.
+    # Load image of the player's car.
     carImg = pygame.image.load("player_car.png")
-    # Load image of the obstacle's car
+    # Load image of the obstacle's car.
     car2Img = pygame.image.load("obstacle_car.png")
-    # Load image of the background for the game to scroll through
+    # Load image of the background for the game to scroll through.
     bgImg = pygame.image.load("background.png")
-    # Load image of a crash which only appears on collision
+    # Load image of a crash which only appears on collision.
     crash_img = pygame.image.load("appear_on_collision.png")
 
-    # Set game window icon to car image
+    # Set game window icon to car image.
     pygame.display.set_icon(carImg)  
 
-    # Refresh the screen
+    # Refresh the screen.
     pygame.display.update()
-    # Run at 60 frames per second
+    # Run at 60 frames per second.
     clock.tick(60)  
 
-    # Purpose: Load and play the background music using a mp3 file
+    # Purpose: Load and play the background music using a mp3 file.
     try:
-        # Load the mp3 file containing the Background Music
+        # Load the mp3 file containing the Background Music.
         START_MUSIC = pygame.mixer.Sound("background_music.mp3")
-        # Play the mp3 file containing the Background Music
-        START_MUSIC.play()
-        # In case the music file is missing show an error message
-        # to prevent entire program from malfunctioning
+        # Play the mp3 file containing the Background Music.
+        START_MUSIC.play(loops=-1)
+        # In case the music file is missing show an error message.
+        # To prevent entire program from malfunctioning.
     except (pygame.error, FileNotFoundError):
-        # Show a warning popup window on Tkinter (not the console) if the music file is missing
+        # Show a warning popup window on Tkinter (not the console) if the music file is missing.
         messagebox.showwarning(
             "Missing Music File",
             """ERROR: Background music file not found.
@@ -349,8 +376,8 @@ def load_mistakes():
                 return []
     return []
 
-# Function of the main game loop which handles game logic,
-# events, updates and rendering"""
+""" Function of the main game loop which handles game logic,
+    events, updates and rendering"""
 def gameloop():
     global answer_times
     answer_times = []
@@ -362,7 +389,7 @@ def gameloop():
     bg_x = (DISPLAY_WIDTH / 2) - (360 / 2)
     bg_speed = 3
     car_y = (DISPLAY_HEIGHT - CAR_HEIGHT)
-    car_speed = 0.5
+    car_speed = 0.7
     count = 0
     gameExit = False
     boost_active = False
@@ -396,8 +423,7 @@ def gameloop():
     while not gameExit:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                pygame.quit()
-                quit()
+                on_closing()
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT and car_lane > 1:
                     car_lane -= 1
@@ -512,8 +538,11 @@ def main_menu():
     root.configure(bg="skyblue")
     root.resizable(False, False)
 
+    # Set custom close handler for red cross
+    root.protocol("WM_DELETE_WINDOW", on_closing)
+
     # Load logo image
-    logo_img = tk.PhotoImage(file="logo.png")
+    logo_img = tk.PhotoImage(file="start_logo.png")
     logo_label = tk.Label(root, image=logo_img, bg="skyblue")
     logo_label.image = logo_img  
     logo_label.pack(pady=(3,3))
@@ -529,7 +558,7 @@ def main_menu():
     tk.Button(btn_frame, text="Instructions", font=("SegoeUI", 14), width=16, command=show_instructions).pack(pady=10)
     tk.Button(btn_frame, text="Leaderboard", font=("SegoeUI", 14), width=16, command=show_leaderboard_screen).pack(pady=10)
     tk.Button(btn_frame, text="Mistakes", font=("SegoeUI", 14), width=16, command=show_mistakes_screen).pack(pady=10)
-    tk.Button(btn_frame, text="Exit", font=("SegoeUI", 14), width=16, command=root.destroy).pack(pady=10)
+    tk.Button(btn_frame, text="Exit", font=("SegoeUI", 14), width=16, command=on_closing).pack(pady=10)
 
     root.mainloop()
 
@@ -548,7 +577,7 @@ def start_clicked():
     username_entry = tk.Entry(username_frame, font=("SegoeUI", 14))
     username_entry.pack(side=tk.LEFT)
 
-    tk.Button(root, text="Continue", font=("SegoeUI", 12), command=launch_game).pack(pady=10)
+    tk.Button(root, text="Continue", font=("SegoeUI", 12), command=launch_game).pack(padx=10)
 
 def show_instructions():
     messagebox.showinfo("Instructions",
@@ -668,7 +697,7 @@ def show_mistakes_screen():
     mono_font = ("Courier New", 11)
 
     # Header
-    header = f"{'Username':<15} {'Difficulty':<12} {'Question':<32} {'Correct Answer':<20} {'Player Answer':<20}"
+    header = f"{'Username':<15} {'Difficulty':<12} {'Question':<22} {'Correct Answer':<18} {'Player Answer':<18}"
     tk.Label(text_frame, text=header, font=("Courier New", 12, "bold"), bg="white", anchor='w').pack(fill='x')
     
     # Divider
@@ -693,9 +722,12 @@ def show_difficulty_screen():
     # Create a window to select difficulty after username is entered
     difficulty_window = tk.Toplevel()
     difficulty_window.title("Select Difficulty")
-    difficulty_window.geometry("600x400")
+    difficulty_window.geometry("700x500")
     difficulty_window.configure(bg="skyblue")
     difficulty_window.resizable(False, False)
+
+    # Set close handler for difficulty window
+    difficulty_window.protocol("WM_DELETE_WINDOW", on_closing)
 
     tk.Label(difficulty_window, text="Choose Difficulty:", font=("SegoeUI", 18, "bold"), bg="white").pack(pady=20)
 
@@ -705,9 +737,12 @@ def show_difficulty_screen():
         tk.Button(difficulty_window, text=diff, font=("SegoeUI", 14),
                   width=20, pady=10, bg="#e0e0e0", command=lambda d=diff: start_game_with_difficulty(d, difficulty_window)).pack(pady=5)
 
+    # Back button for difficulty screen
+    tk.Button(difficulty_window, text="Back", font=("SegoeUI", 12), command=lambda: [difficulty_window.destroy(), start_clicked()]).pack(pady=5)
+
 def start_game_with_difficulty(difficulty, window):
     global selected_difficulty
-     # Store selected difficulty globally
+    # Store selected difficulty globally
     selected_difficulty = difficulty
     # Close difficulty window
     window.destroy()
@@ -724,8 +759,11 @@ def show_end_screen():
     end_root.configure(bg="skyblue")
     end_root.resizable(False, False)
 
+    # Set close handler for end screen window
+    end_root.protocol("WM_DELETE_WINDOW", on_closing)
+
     # Load logo image
-    logo_img = tk.PhotoImage(file="logo.png")
+    logo_img = tk.PhotoImage(file="end_logo.png")
     logo_label = tk.Label(end_root, image=logo_img, bg="skyblue")
     logo_label.image = logo_img  
     logo_label.pack(pady=(3,3))
