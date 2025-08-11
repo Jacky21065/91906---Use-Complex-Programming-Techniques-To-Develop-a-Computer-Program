@@ -28,6 +28,9 @@ Note: Tkinter does not need to be manually installed as it comes pre installed w
 
 **Make sure ALL files are in the program folder:**
 
+\*FINAL\_PROGRAM.py
+\*Credits.md
+
 \*background\_music.mp3
 
 \*background.png
@@ -37,9 +40,13 @@ Note: Tkinter does not need to be manually installed as it comes pre installed w
 
 \*player\_car.png
 
-\*mistakes.json
+\*start\_logo.png
 
-\*leaderboard.json
+\*end\_logo.png
+
+\*mistakes.json   	(will autogenerate after first game)
+
+\*leaderboard.json	(will autogenerate after first game)
 
 
 
@@ -53,13 +60,13 @@ Note: Tkinter does not need to be manually installed as it comes pre installed w
 
    Run the following in the Windows command prompt:
 
-&nbsp;
+ 
 
        **IN THIS ORDER**
 
        pip install pygame
 
-&nbsp;      pip install pygame sympy
+       pip install pygame sympy
 
 
 
@@ -106,6 +113,4 @@ Move the blue player car across the 3 lanes
 Boost speed of the blue player car
 
 \*Hold SPACEBAR
-
-
 
